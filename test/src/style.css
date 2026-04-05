@@ -1,0 +1,107 @@
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  width: 100%; height: 100%;
+  background: #101010;
+  overflow: hidden;
+}
+
+canvas { display: block; width: 100vw; height: 100vh; }
+
+/* LOADER */
+#loader {
+  position: fixed; inset: 0; background: #101010;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 100; transition: opacity .6s ease;
+}
+#loader.out { opacity: 0; pointer-events: none; }
+
+.ring {
+  width: 32px; height: 32px;
+  border: 1px solid #e0e0e0;
+  border-top-color: #111;
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* HUD */
+#hud {
+  position: fixed; inset: 0;
+  pointer-events: none;
+  opacity: 0; transition: opacity .5s;
+}
+#hud.on { opacity: 1; }
+
+/* Nav */
+nav {
+  position: absolute; top: 0; left: 0; right: 0;
+  padding: 32px 48px;
+  display: flex; align-items: center; justify-content: space-between;
+  pointer-events: all;
+}
+
+.brand {
+  font-family: 'Georgia', serif;
+  font-size: 15px;
+  color: #111;
+  letter-spacing: .5px;
+  font-style: normal;
+}
+.brand em {
+  font-style: italic;
+  color: #999;
+}
+
+.nav-links {
+  display: flex; gap: 40px; list-style: none;
+}
+.nav-links a {
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #bbb;
+  text-decoration: none;
+  transition: color .2s;
+}
+.nav-links a:hover { color: #111; }
+
+/* Hint */
+.hint {
+  position: absolute;
+  bottom: 32px; left: 0; right: 0;
+  text-align: center;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #ccc;
+}
+
+/* Equalizer */
+.equalizer {
+  position: absolute;
+  bottom: 48px; left: 0; right: 0;
+  display: flex; justify-content: center; align-items: flex-end; gap: 6px;
+}
+
+.bar {
+  width: 6px;
+  border-radius: 3px;
+  background: #e02020;
+  transform-origin: bottom;
+  animation: eq 1s ease-in-out infinite;
+}
+.bar:nth-child(1) { height: 18px; animation-delay: 0.0s; }
+.bar:nth-child(2) { height: 34px; animation-delay: 0.2s; }
+.bar:nth-child(3) { height: 46px; animation-delay: 0.1s; }
+.bar:nth-child(4) { height: 24px; animation-delay: 0.3s; }
+.bar:nth-child(5) { height: 42px; animation-delay: 0.15s; }
+.bar:nth-child(6) { height: 30px; animation-delay: 0.25s; }
+.bar:nth-child(7) { height: 16px; animation-delay: 0.05s; }
+
+@keyframes eq {
+  0%, 100% { transform: scaleY(0.25); opacity: 0.4; }
+  50%       { transform: scaleY(1);   opacity: 1;   }
+}
