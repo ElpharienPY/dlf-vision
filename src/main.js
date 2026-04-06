@@ -68,6 +68,7 @@ const taglines = [
 ];
 
 // ── ELEMENTS ──
+const siteHeader = document.getElementById('site-header');
 const hud        = document.getElementById('hud');
 const introBar   = document.getElementById('intro-bar');
 const barFill    = document.getElementById('barFill');
@@ -101,6 +102,7 @@ new GLTFLoader().load(
     scene.add(logoGroup);
 
     // 1. Afficher la scène + lancer la barre
+    siteHeader.classList.add('on');
     hud.classList.add('on');
     setTimeout(() => {
       introBar.classList.add('on');
