@@ -1,12 +1,48 @@
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-html, body {
-  width: 100%; height: 100%;
-  background: #101010;
-  overflow: hidden;
+html {
+  height: 100%;
 }
 
-canvas { display: block; width: 100vw; height: 100vh; }
+body {
+  width: 100%;
+  min-height: 200vh;
+  background: #101010;
+}
+
+canvas {
+  display: block;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+}
+
+/* ── SCROLL SPACE ── */
+#scroll-space {
+  height: 300vh;
+  pointer-events: none;
+}
+
+/* ── SECTION CONTENT ── */
+#section-content {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.section-para {
+  font-family: 'Georgia', serif;
+  font-style: italic;
+  font-size: clamp(15px, 2.2vw, 26px);
+  color: #cccccc;
+  line-height: 1.9;
+  letter-spacing: 0.5px;
+}
+
 
 /* INTRO BAR */
 #intro-bar {
@@ -106,6 +142,37 @@ nav {
   transition: opacity 2.5s ease .4s;
 }
 #hud.on .tagline { opacity: 1; }
+
+/* ── SCROLL HINT ── */
+#scroll-hint {
+  position: absolute;
+  bottom: 28px; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  opacity: 0;
+  transition: opacity 1s ease;
+  pointer-events: none;
+}
+#scroll-hint.on { opacity: 1; }
+
+.scroll-hint-label {
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 9px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: #555;
+}
+
+.scroll-hint-line {
+  width: 1px;
+  height: 32px;
+  background: linear-gradient(to bottom, #555, transparent);
+  animation: scroll-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes scroll-pulse {
+  0%, 100% { opacity: 0.3; transform: scaleY(0.6); transform-origin: top; }
+  50%       { opacity: 1;   transform: scaleY(1);   transform-origin: top; }
+}
 
 /* Hint */
 .hint {

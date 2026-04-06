@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(cp -r \"d:/Users/Hamid/Documents/dlf-vision/test/src\" \"d:/Users/Hamid/Documents/dlf-vision/src\")",
-      "Bash(cp -r \"d:/Users/Hamid/Documents/dlf-vision/test/public\" \"d:/Users/Hamid/Documents/dlf-vision/public\")"
+      "Bash(cp -r \"d:/Users/Hamid/Documents/dlf-vision/test/public\" \"d:/Users/Hamid/Documents/dlf-vision/public\")",
+      "Bash(npm install:*)",
+      "Bash(npx vite:*)"
     ]
   }
 }
