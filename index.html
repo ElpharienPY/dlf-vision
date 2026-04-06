@@ -1,11 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DLF VISION</title>
+  <link rel="stylesheet" href="./src/style.css" />
 </head>
 <body>
-    
+  <canvas id="c"></canvas>
+
+  <div id="hud">
+    <nav>
+      <span class="brand">DLF <em>Vision</em></span>
+      <ul class="nav-links">
+        <li><a href="#">Projets</a></li>
+        <li><a href="#">Studio</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </nav>
+
+    <div id="intro-bar">
+      <p class="pre-label">DLF — INITIALISATION DE LA VISION</p>
+      <div class="pre-bar-track">
+        <div class="pre-bar-fill" id="barFill"></div>
+      </div>
+      <span class="pre-pct" id="pctCounter">0%</span>
+    </div>
+
+    <p id="tagline" class="tagline"></p>
+  </div>
+
+  <script type="module" src="./src/main.js"></script>
 </body>
 </html>
