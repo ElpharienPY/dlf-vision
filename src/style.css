@@ -94,24 +94,32 @@ canvas {
 }
 #hud.on { opacity: 1; }
 
-/* Nav */
-nav {
-  position: absolute; top: 0; left: 0; right: 0;
+/* HEADER */
+#site-header {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 100;
+  opacity: 0;
+  transition: opacity .8s ease;
+  pointer-events: none;
+}
+#site-header.on { opacity: 1; pointer-events: all; }
+
+#site-header nav {
   padding: 32px 48px;
   display: flex; align-items: center; justify-content: space-between;
-  pointer-events: all;
 }
 
 .brand {
   font-family: 'Georgia', serif;
   font-size: 15px;
-  color: #111;
+  color: #ccc;
   letter-spacing: .5px;
   font-style: normal;
+  text-decoration: none;
 }
 .brand em {
   font-style: italic;
-  color: #999;
+  color: #666;
 }
 
 .nav-links {
@@ -122,11 +130,12 @@ nav {
   font-size: 11px;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: #bbb;
+  color: #777;
   text-decoration: none;
   transition: color .2s;
 }
-.nav-links a:hover { color: #111; }
+.nav-links a:hover,
+.nav-links a.active { color: #ccc; }
 
 /* Tagline */
 .tagline {

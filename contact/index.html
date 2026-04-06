@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DLF Vision - Contact</title>
+    <style>
+        /* RESET & BASE */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: #050505;
+            color: #f0f0f0;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            text-transform: uppercase;
+            height: 100vh;
+            overflow: hidden;
+        }
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+
+        /* HEADER FIXE */
+        #site-header {
+            position: fixed; 
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            opacity: 0;
+            transition: opacity .8s ease;
+            pointer-events: none;
+            background: linear-gradient(to bottom, rgba(5,5,5,1) 0%, rgba(5,5,5,0) 100%);
+        }
+        #site-header.on { opacity: 1; pointer-events: all; }
+        #site-header nav {
+            padding: 32px 48px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .brand { font-weight: bold; font-size: 1.2rem; letter-spacing: 1px; }
+        .brand em { font-style: italic; font-weight: normal; }
+        .nav-links { display: flex; gap: 2.5rem; font-size: 0.85rem; font-weight: 500; letter-spacing: 1px;}
+        .nav-links a:hover { opacity: 0.7; }
+
+        /* TYPOGRAPHIES */
+        .massive-text {
+            font-size: clamp(3rem, 7vw, 10rem);
+            font-weight: 900;
+            line-height: 0.85;
+            letter-spacing: -0.04em;
+        }
+        .mono-text {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            color: #777;
+        }
+
+        /* LA GRILLE PRINCIPALE */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr 300px;
+            height: 100vh; 
+            width: 100%;
+        }
+
+        .grid-cell {
+            padding: 120px 2.5rem 2.5rem 2.5rem;
+            border-right: 1px solid #222;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .grid-cell:last-child { border-right: none; }
+
+        /* COLONNE GAUCHE (Impact) */
+        .cell-left { justify-content: center; }
+        .tech-badge {
+            position: absolute;
+            top: 100px; 
+            left: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        /* COLONNE CENTRALE */
+        .cell-center {
+            justify-content: flex-start; /* Réinitialisé car on gère les marges différemment */
+            overflow-y: auto; 
+        }
+        
+        .services-block { margin-bottom: 2rem; }
+        .services-list {
+            margin-top: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            color: #ccc;
+        }
+
+        /* FORMULAIRE (Le ticket) */
+        .form-wrapper {
+            border-top: 1px solid #333;
+            border-bottom: 1px solid #333;
+            padding: 2.5rem 0;
+            width: 100%;
+        }
+        form { display: flex; flex-direction: column; gap: 1.5rem; }
+        .input-group { display: flex; flex-direction: column; gap: 0.5rem; }
+        
+        input, select, textarea {
+            background: transparent; border: none; border-bottom: 1px solid #444;
+            color: #fff; font-size: 0.9rem; padding: 0.5rem 0;
+            text-transform: uppercase; outline: none; transition: border-color 0.3s ease;
+            font-family: inherit;
+        }
+        input:focus, select:focus, textarea:focus { border-bottom: 1px solid #fff; }
+        select { appearance: none; cursor: pointer; color: #aaa; }
+        
+        /* GRAND CHAMP DE DESCRIPTION (S4) */
+        textarea {
+            min-height: 200px; 
+            resize: vertical; 
+            line-height: 1.4;
+        }
+
+        button {
+            background: transparent; color: #fff; border: 1px solid #555;
+            padding: 1rem; font-weight: bold; cursor: pointer;
+            text-transform: uppercase; transition: all 0.3s ease; margin-top: 0.5rem;
+        }
+        button:hover { background: #fff; color: #000; border-color: #fff; }
+
+        /* NOUVEAU BLOC METRIQUES (S1) */
+        .system-metrics {
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px dashed #444;
+            border-bottom: 1px dashed #444;
+            padding: 1.5rem 0;
+            margin-top: 2rem; /* Espace avec le formulaire */
+            margin-bottom: 2rem; /* Espace avec le bloc du bas */
+        }
+
+        .metric-box {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .metric-label {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.6rem;
+            color: #666;
+            letter-spacing: 0.1em;
+        }
+
+        .metric-value {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #fff;
+            letter-spacing: 2px;
+        }
+
+        /* BLOC META EN BAS */
+        .meta-block {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: auto; /* Pousse ce bloc tout en bas de la colonne */
+        }
+        .meta-block a { color: #ccc; transition: color 0.3s; }
+        .meta-block a:hover { color: #fff; text-decoration: underline; }
+
+        /* COLONNE DROITE (Film Strip) */
+        .photo-column { padding: 0; overflow: hidden; background: #0a0a0a; position: relative; }
+        .photo-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, #050505 0%, transparent 15%, transparent 85%, #050505 100%);
+            z-index: 10; pointer-events: none;
+        }
+        .film-strip { display: flex; flex-direction: column; gap: 1px; animation: scrollPhotos 25s linear infinite; }
+        .film-strip img {
+            width: 100%; height: 250px; object-fit: cover;
+            filter: grayscale(100%) contrast(120%); transition: filter 0.3s ease;
+        }
+        .film-strip img:hover { filter: grayscale(0%) contrast(100%); }
+        @keyframes scrollPhotos { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            .main-grid { grid-template-columns: 1fr 1fr; }
+            .photo-column { display: none; }
+            .system-metrics { flex-direction: column; gap: 1rem; }
+        }
+        @media (max-width: 768px) {
+            #site-header nav { padding: 20px; flex-direction: column; gap: 1rem; }
+            .main-grid { grid-template-columns: 1fr; overflow-y: auto; height: auto; }
+            .grid-cell { padding: 150px 1.5rem 3rem 1.5rem; border-right: none; border-bottom: 1px solid #222; }
+            .cell-center { gap: 1rem; }
+            .meta-block { flex-direction: column; align-items: flex-start; gap: 1.5rem; margin-top: 2rem; }
+            body { height: auto; overflow: auto; }
+            .tech-badge { position: relative; top: 0; left: 0; margin-bottom: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header id="site-header" class="on">
+        <nav>
+            <a href="/" class="brand">DLF <em>Vision</em></a>
+            <ul class="nav-links">
+                <li><a href="#">Projets</a></li>
+                <li><a href="#">Studio</a></li>
+                <li><a href="/contact/">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- GRILLE PRINCIPALE -->
+    <div class="main-grid">
+        
+        <!-- COLONNE 1 -->
+        <div class="grid-cell cell-left">
+            <div class="tech-badge mono-text">
+                <span>> STATUS: ENREGISTREMENT</span>
+                <span>> STUDIO: ONLINE</span>
+            </div>
+            <h1 class="massive-text">LANCE<br>LA<br>MACHINE.</h1>
+        </div>
+
+        <!-- COLONNE 2 -->
+        <div class="grid-cell cell-center">
+            
+            <div class="services-block mono-text">
+                <div>> CAPACITÉS OPÉRATIONNELLES</div>
+                <ul class="services-list">
+                    <li>01. CLIP OFFICIEL</li>
+                    <li>02. FREESTYLE / SESSION STUDIO</li>
+                    <li>03. DIRECTION ARTISTIQUE</li>
+                    <li>04. POST-PRODUCTION / COLORIMÉTRIE</li>
+                    <li>05. COUVERTURE ÉVÉNEMENTIELLE</li>
+                </ul>
+            </div>
+
+            <!-- LE FORMULAIRE -->
+            <div class="form-wrapper">
+                <form id="dlf-form">
+                    <div class="mono-text">> INITIALISER UNE DEMANDE</div>
+                    <div class="input-group"><input type="text" id="artiste" required placeholder="ID Artiste / Label"></div>
+                    <div class="input-group">
+                        <select id="type_projet" required>
+                            <option value="" disabled selected>SÉLECTIONNER LE TYPE DE PROJET</option>
+                            <option value="clip">Clip Officiel</option>
+                            <option value="freestyle">Freestyle / Session</option>
+                            <option value="da">Direction Artistique</option>
+                        </select>
+                    </div>
+                    <div class="input-group"><input type="email" id="email" required placeholder="CONTACT@ARTISTE.COM"></div>
+                    <div class="input-group"><input type="url" id="lien" placeholder="LIEN DU SON (OPTIONNEL)"></div>
+                    
+                    <div class="input-group">
+                        <textarea id="description" required maxlength="1000" placeholder="DÉTAILS DU PROJET (VISION, RÉFÉRENCES, DISPOS...)"></textarea>
+                    </div>
+
+                    <button type="submit">SOUMETTRE LE PROJET</button>
+                </form>
+                
+                <div id="success-message" style="display: none; flex-direction: column; gap: 1rem;">
+                    <div class="mono-text">> TRANSMISSION RÉUSSIE</div>
+                    <h2 class="massive-text" style="font-size: 2.5rem; letter-spacing: 0;">DOSSIER <br><span id="dossier-id"></span></h2>
+                    <div class="mono-text" style="color: #ccc;">L'ÉQUIPE REVIENT VERS VOUS SOUS 48H.</div>
+                </div>
+            </div>
+
+            <!-- NOUVEAU BLOC : METRIQUES / DATA (S1) -->
+            <div class="system-metrics">
+                <div class="metric-box">
+                    <span class="metric-label">HEURE LOCALE (PARIS)</span>
+                    <span class="metric-value" id="live-clock">00:00:00</span>
+                </div>
+                <div class="metric-box">
+                    <span class="metric-label">LATENCE RÉPONSE</span>
+                    <span class="metric-value">24-48H</span>
+                </div>
+                <div class="metric-box">
+                    <span class="metric-label">STATUS RÉSEAU</span>
+                    <span class="metric-value" style="color: #4ade80;">OPTIMAL</span>
+                </div>
+            </div>
+
+            <div class="meta-block mono-text">
+                <div class="location">
+                    > ZONE D'OPÉRATION<br>
+                    <span style="color: #ccc;">PARIS, ÎLE-DE-FRANCE, FRANCE</span>
+                </div>
+                <div class="socials">
+                    > CANAUX DE DIFFUSION<br>
+                    <a href="#">INSTAGRAM</a> // <a href="#">TIKTOK</a> // <a href="#">YOUTUBE</a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- COLONNE 3 -->
+        <div class="grid-cell photo-column">
+            <div class="photo-overlay"></div>
+            <div class="film-strip">
+                <img src="https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?q=80&w=600&auto=format&fit=crop" alt="Tournage 1">
+                <img src="https://images.unsplash.com/photo-1585776264264-b0cfdd50c77a?q=80&w=600&auto=format&fit=crop" alt="Tournage 2">
+                <img src="https://images.unsplash.com/photo-1526045431048-f857369baa09?q=80&w=600&auto=format&fit=crop" alt="Tournage 3">
+                <img src="https://images.unsplash.com/photo-1601506521937-0121a7fc2a6b?q=80&w=600&auto=format&fit=crop" alt="Tournage 4">
+                <!-- Répétition pour la boucle infinie -->
+                <img src="https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?q=80&w=600&auto=format&fit=crop" alt="Tournage 1">
+                <img src="https://images.unsplash.com/photo-1585776264264-b0cfdd50c77a?q=80&w=600&auto=format&fit=crop" alt="Tournage 2">
+                <img src="https://images.unsplash.com/photo-1526045431048-f857369baa09?q=80&w=600&auto=format&fit=crop" alt="Tournage 3">
+                <img src="https://images.unsplash.com/photo-1601506521937-0121a7fc2a6b?q=80&w=600&auto=format&fit=crop" alt="Tournage 4">
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- 1. FONCTION HORLOGE EN TEMPS RÉEL ---
+        function updateClock() {
+            const clockElement = document.getElementById('live-clock');
+            if (clockElement) {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('fr-FR', { 
+                    timeZone: 'Europe/Paris', 
+                    hour12: false 
+                });
+                clockElement.textContent = timeString;
+            }
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // --- 2. GESTION DU FORMULAIRE ---
+        const form = document.getElementById('dlf-form');
+        const successMessage = document.getElementById('success-message');
+        const dossierIdSpan = document.getElementById('dossier-id');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Génération du numéro de dossier type #4092
+            const randomId = '#' + (Math.floor(Math.random() * 9000) + 1000);
+            
+            // Transition visuelle
+            form.style.display = 'none';
+            dossierIdSpan.textContent = randomId;
+            successMessage.style.display = 'flex';
+        });
+    </script>
+
+</body>
+</html>
