@@ -2,17 +2,12 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Racine active
-
-Le projet actif est dans le sous-dossier `test/`. Tous les fichiers sources, commandes et dépendances s'y trouvent. La racine du dépôt contient un `index.html` vide à ignorer.
-
 ## Commandes
 
 ```bash
-cd test
 npm install       # première fois
 npm run dev       # serveur Vite sur http://localhost:5173
-npm run build     # build de production dans test/dist/
+npm run build     # build de production dans dist/
 npm run preview   # prévisualiser le build
 ```
 
@@ -21,16 +16,16 @@ Ne jamais utiliser Live Server — les imports ES modules (`three`, GLTFLoader) 
 ## Architecture
 
 ```
-test/
-├── index.html          # Point d'entrée unique
+/
+├── index.html        # Point d'entrée unique
 ├── src/
-│   ├── main.js         # Toute la logique : Three.js, chargement GLB, HUD, animations
-│   └── style.css       # Tout le CSS : preloader, HUD, nav, tagline, equalizer
+│   ├── main.js       # Toute la logique : Three.js, chargement GLB, HUD, animations
+│   └── style.css     # Tout le CSS : intro-bar, HUD, nav, tagline
 └── public/
-    └── Logo_DLF_Fixe_Blanc.glb   # Modèle 3D du logo (servi statiquement par Vite)
+    └── Logo DLF Fixe Blanc.glb   # Modèle 3D du logo (servi statiquement par Vite)
 ```
 
-**`main.js` — flux d'exécution :**
+**`src/main.js` — flux d'exécution :**
 1. Setup Three.js (renderer, scene, camera, lights, PMREMGenerator pour les reflets chrome)
 2. Chargement du GLB via `GLTFLoader` → matériau chrome appliqué (`MeshStandardMaterial`, metalness: 1, roughness: 0.05)
 3. À la fin du chargement : HUD fade in → barre d'intro animée (`runIntroBar()`) → tagline aléatoire
