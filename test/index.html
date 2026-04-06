@@ -9,10 +9,6 @@
 <body>
   <canvas id="c"></canvas>
 
-  <div id="loader">
-    <div class="ring"></div>
-  </div>
-
   <div id="hud">
     <nav>
       <span class="brand">DLF <em>Vision</em></span>
@@ -22,16 +18,16 @@
         <li><a href="#">Contact</a></li>
       </ul>
     </nav>
-    <p class="hint">Glisser pour explorer</p>
-    <div class="equalizer">
-      <span class="bar"></span>
-      <span class="bar"></span>
-      <span class="bar"></span>
-      <span class="bar"></span>
-      <span class="bar"></span>
-      <span class="bar"></span>
-      <span class="bar"></span>
+
+    <div id="intro-bar">
+      <p class="pre-label">DLF — INITIALISATION DE LA VISION</p>
+      <div class="pre-bar-track">
+        <div class="pre-bar-fill" id="barFill"></div>
+      </div>
+      <span class="pre-pct" id="pctCounter">0%</span>
     </div>
+
+    <p id="tagline" class="tagline"></p>
   </div>
 
   <script type="module" src="./src/main.js"></script>

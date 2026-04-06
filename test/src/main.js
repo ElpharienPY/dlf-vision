@@ -51,10 +51,23 @@ const mat = new THREE.MeshStandardMaterial({
   side: THREE.DoubleSide,
 });
 
-// ── LOAD GLB ──
-const loader = document.getElementById('loader');
-const hud = document.getElementById('hud');
+// ── TAGLINES ──
+const taglines = [
+  "L'instinct du terrain, l'art de la vision.",
+  "Sublimer le réel, viser l'exception.",
+  "L'esthétique pure, l'impact à la seconde.",
+  "L'art de l'ombre, la clarté du crime.",
+  "Le bitume, la plume, l'image qui prend.",
+];
 
+// ── ELEMENTS ──
+const hud        = document.getElementById('hud');
+const introBar   = document.getElementById('intro-bar');
+const barFill    = document.getElementById('barFill');
+const pctCounter = document.getElementById('pctCounter');
+const taglineEl  = document.getElementById('tagline');
+
+// ── LOAD GLB ──
 let logoGroup = null;
 
 new GLTFLoader().load(
@@ -62,7 +75,6 @@ new GLTFLoader().load(
   (gltf) => {
     const root = gltf.scene;
 
-    // Centrer et scaler
     const box = new THREE.Box3().setFromObject(root);
     const center = new THREE.Vector3();
     box.getCenter(center);
@@ -71,7 +83,6 @@ new GLTFLoader().load(
     box.getSize(size);
     root.scale.setScalar(1.7 / Math.max(size.x, size.y, size.z));
 
-    // Appliquer matériau
     root.traverse((child) => {
       if (child.isMesh) {
         child.material = mat;
@@ -82,13 +93,44 @@ new GLTFLoader().load(
     logoGroup = root;
     scene.add(logoGroup);
 
-    // Cacher loader
-    loader.classList.add('out');
-    setTimeout(() => { loader.style.display = 'none'; hud.classList.add('on'); }, 600);
+    // 1. Afficher la scène + lancer la barre
+    hud.classList.add('on');
+    setTimeout(() => {
+      introBar.classList.add('on');
+      runIntroBar();
+    }, 600);
   },
   null,
   (err) => console.error('Erreur GLB :', err)
 );
+
+// ── BARRE D'INTRO (décorative, après chargement) ──
+function runIntroBar() {
+  let pct = 0;
+
+  function tick() {
+    pct += (100 - pct) * 0.018; // easing lent
+
+    barFill.style.width = pct + '%';
+    pctCounter.textContent = Math.floor(pct) + '%';
+
+    if (pct < 99.2) {
+      requestAnimationFrame(tick);
+    } else {
+      barFill.style.width = '100%';
+      pctCounter.textContent = '100%';
+
+      // Cacher la barre, afficher la tagline
+      setTimeout(() => {
+        introBar.classList.remove('on');
+        introBar.classList.add('out');
+        taglineEl.textContent = taglines[Math.floor(Math.random() * taglines.length)];
+      }, 400);
+    }
+  }
+
+  requestAnimationFrame(tick);
+}
 
 // ── CONTROLS ──
 let drag = false, rmb = false;
