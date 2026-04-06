@@ -5,15 +5,16 @@ import Lenis from 'lenis';
 
 // ── RENDERER ──
 const canvas = document.getElementById('c');
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setClearColor(0x000000, 0);
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.2;
 renderer.shadowMap.enabled = true;
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x101010);
+// scene.background null → canvas transparent, le CSS est visible derrière
 
 // ── ENVIRONMENT (chrome reflections) ──
 const pmrem = new THREE.PMREMGenerator(renderer);
@@ -74,7 +75,6 @@ const introBar   = document.getElementById('intro-bar');
 const barFill    = document.getElementById('barFill');
 const pctCounter = document.getElementById('pctCounter');
 const taglineEl  = document.getElementById('tagline');
-const scrollHint    = document.getElementById('scroll-hint');
 const sectionContent = document.getElementById('section-content');
 
 // ── LENIS ──
@@ -115,9 +115,6 @@ new GLTFLoader().load(
     logoGroup = root;
     scene.add(logoGroup);
 
-    // Scroll disponible dès que le logo est chargé
-    lenis.start();
-
     // 1. Afficher la scène + lancer la barre
     siteHeader.classList.add('on');
     hud.classList.add('on');
@@ -146,6 +143,10 @@ function runIntroBar() {
       barFill.style.width = '100%';
       pctCounter.textContent = '100%';
 
+      // Scroll débloqué quand la barre est pleine
+      document.body.classList.add('ready');
+      lenis.start();
+
       // Cacher la barre, afficher la tagline
       setTimeout(() => {
         introBar.classList.remove('on');
@@ -161,7 +162,6 @@ function runIntroBar() {
           lockPending = false;
           lockedPhase = false;
           autoRot = true;
-          scrollHint.classList.add('on');
         }, 5000);
       }, 400);
     }
@@ -316,7 +316,6 @@ function animate(time = 0) {
   if (!lockedPhase) {
     const fadeOut = Math.max(0, 1 - scrollProgress * 5);
     taglineEl.style.opacity = fadeOut;
-    scrollHint.style.opacity = fadeOut;
   }
 
   renderer.render(scene, camera);
@@ -329,3 +328,33 @@ window.addEventListener('resize', () => {
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
+
+// ── CURSEUR CUSTOM ──
+const cursorEl = document.getElementById('cursor');
+let curX = -100, curY = -100; // hors écran au départ
+let aimX = -100, aimY = -100;
+
+window.addEventListener('mousemove', (e) => {
+  aimX = e.clientX;
+  aimY = e.clientY;
+  cursorEl.classList.remove('hidden');
+});
+
+window.addEventListener('mouseleave', () => cursorEl.classList.add('hidden'));
+window.addEventListener('mouseenter', () => cursorEl.classList.remove('hidden'));
+
+// Pointer state sur les éléments interactifs
+document.querySelectorAll('a, button, [data-cursor="pointer"]').forEach(el => {
+  el.addEventListener('mouseenter', () => cursorEl.classList.add('pointer'));
+  el.addEventListener('mouseleave', () => cursorEl.classList.remove('pointer'));
+});
+
+function tickCursor() {
+  curX += (aimX - curX) * 0.12;
+  curY += (aimY - curY) * 0.12;
+  cursorEl.style.left = curX + 'px';
+  cursorEl.style.top  = curY + 'px';
+  requestAnimationFrame(tickCursor);
+}
+tickCursor();
+

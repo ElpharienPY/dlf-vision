@@ -7,7 +7,13 @@
   <link rel="stylesheet" href="./src/style.css" />
 </head>
 <body>
+  <div id="page-transition" style="transform:translateY(0);transition:none;"></div>
+  <div id="aura"></div>
   <canvas id="c"></canvas>
+
+  <div id="cursor-container">
+    <div id="cursor"></div>
+  </div>
 
   <header id="site-header">
     <nav>
@@ -20,7 +26,7 @@
     </nav>
   </header>
 
-  <div id="hud">
+<div id="hud">
     <div id="intro-bar">
       <p class="pre-label">DLF — INITIALISATION DE LA VISION</p>
       <div class="pre-bar-track">
@@ -31,10 +37,6 @@
 
     <p id="tagline" class="tagline"></p>
 
-    <div id="scroll-hint">
-      <span class="scroll-hint-label">SCROLL</span>
-      <div class="scroll-hint-line"></div>
-    </div>
   </div>
 
   <div id="section-content">
@@ -47,6 +49,7 @@
 
   <div id="scroll-space"></div>
 
+  <script src="/transition.js"></script>
   <script type="module" src="./src/main.js"></script>
 </body>
 </html>

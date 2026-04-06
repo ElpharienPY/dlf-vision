@@ -5,6 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DLF Vision - Contact</title>
     <style>
+        /* TRANSITION */
+        #page-transition {
+            position: fixed; inset: 0;
+            z-index: 999999;
+            pointer-events: none;
+            background: #050505;
+        }
+        #page-transition::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: rgba(255,255,255,0.15);
+        }
+
         /* RESET & BASE */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -203,6 +218,7 @@
     </style>
 </head>
 <body>
+  <div id="page-transition" style="transform:translateY(0);transition:none;"></div>
 
     <!-- HEADER -->
     <header id="site-header" class="on">
@@ -319,6 +335,7 @@
 
     </div>
 
+    <script src="/transition.js"></script>
     <script>
         // --- 1. FONCTION HORLOGE EN TEMPS RÉEL ---
         function updateClock() {
