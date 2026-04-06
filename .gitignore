@@ -137,3 +137,7 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Fichiers de clés sensibles
+email_key.txt
+*.key.txt
