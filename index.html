@@ -10,6 +10,7 @@
   <div id="page-transition" style="transform:translateY(0);transition:none;"></div>
   <div id="aura"></div>
   <canvas id="c"></canvas>
+  <div id="canvas-zone"></div>
 
   <div id="cursor-container">
     <div id="cursor"></div>
@@ -61,6 +62,14 @@
       </div>
     </div>
   </section>
+
+  <!-- Modal vidéo -->
+  <div id="video-modal">
+    <div id="video-modal-inner">
+      <button id="video-modal-close" aria-label="Fermer">✕</button>
+      <div id="video-modal-frame"></div>
+    </div>
+  </div>
 
   <script src="/transition.js"></script>
   <script type="module" src="./src/main.js"></script>
