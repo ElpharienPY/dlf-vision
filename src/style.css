@@ -151,8 +151,6 @@ canvas {
 #section-projets {
   position: relative;
   z-index: 10;
-  /* padding-top : laisse la place à la section-para de scroller vers le haut avant d'arriver sur l'image */
-  padding-top: 100vh;
 }
 
 .projet-card {
@@ -283,7 +281,7 @@ canvas {
 .section-para {
   font-family: 'Anton', sans-serif;
   font-style: normal;
-  font-size: clamp(15px, 2.2vw, 26px);
+  font-size: clamp(125px, 2.2vw, 26px);
   color: #cccccc;
   line-height: 1.9;
   letter-spacing: 0.5px;

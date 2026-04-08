@@ -378,7 +378,7 @@ const videoModalClose = document.getElementById('video-modal-close');
 const GUMLET_EMBED = `<div style="position:relative;aspect-ratio:16/9;">
   <iframe
     loading="lazy" title="Gumlet video player"
-    src="https://play.gumlet.io/embed/69d5381715722ddd136fab63?background=false&autoplay=false&loop=false&disable_player_controls=true"
+    src="https://play.gumlet.io/embed/69d5381715722ddd136fab63?background=false&autoplay=false&loop=false&disable_player_controls=true&player_color=%23000000"
     style="border:none; position: absolute; top: 0; left: 0; height: 100%; width: 100%;"
     referrerpolicy="origin"
     allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture; fullscreen;clipboard-write;">
