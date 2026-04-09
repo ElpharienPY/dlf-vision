@@ -177,7 +177,7 @@ function runIntroBar() {
 }
 
 // ── CONTROLS ──
-let drag = false, rmb = false;
+let drag = false;
 let px = 0, py = 0;
 let rotX = 0.1, rotY = 0;
 const initRotX = 0.1, initRotY = 0;
@@ -190,11 +190,18 @@ let rotSpeed = 0;
 let returning = false;
 
 const el = renderer.domElement;
+const canvasZone = document.getElementById('canvas-zone');
+
+function inZone(x, y) {
+  const r = canvasZone.getBoundingClientRect();
+  return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
+}
 
 el.addEventListener('pointerdown', (e) => {
   if (lockedPhase || scrollProgress > 0.01) return;
-  if (e.button === 2) { rmb = true; }
-  else { drag = true; autoRot = false; returning = false; clearTimeout(autoRotTimer); }
+  if (!inZone(e.clientX, e.clientY)) return;
+  if (e.button === 2) return;
+  drag = true; autoRot = false; returning = false; clearTimeout(autoRotTimer);
   px = e.clientX; py = e.clientY;
   el.setPointerCapture(e.pointerId);
 });
@@ -205,7 +212,7 @@ window.addEventListener('pointerup', () => {
       returning = true;
     }, 800);
   }
-  drag = false; rmb = false;
+  drag = false;
 });
 window.addEventListener('pointermove', (e) => {
   if (lockedPhase || scrollProgress > 0.01) return;
@@ -215,7 +222,6 @@ window.addEventListener('pointermove', (e) => {
     rotX += dy * 0.007;
     rotX = Math.max(-1.3, Math.min(1.3, rotX));
   }
-  if (rmb) { panX += dx * 0.003; panY -= dy * 0.003; }
   px = e.clientX; py = e.clientY;
 });
 el.addEventListener('contextmenu', (e) => e.preventDefault());
@@ -224,6 +230,7 @@ el.addEventListener('contextmenu', (e) => e.preventDefault());
 el.addEventListener('touchstart', (e) => {
   if (lockedPhase || scrollProgress > 0.01) return;
   if (e.touches.length === 1) {
+    if (!inZone(e.touches[0].clientX, e.touches[0].clientY)) return;
     drag = true; autoRot = false; returning = false;
     px = e.touches[0].clientX; py = e.touches[0].clientY;
   } else if (e.touches.length === 2) {
@@ -362,6 +369,39 @@ if (projetMedia && projetVideo) {
   projetMedia.addEventListener('mouseenter', () => projetVideo.play());
   projetMedia.addEventListener('mouseleave', () => { projetVideo.pause(); projetVideo.currentTime = 0; });
 }
+
+// ── MODAL VIDÉO PROJET ──
+const videoModal     = document.getElementById('video-modal');
+const videoModalFrame = document.getElementById('video-modal-frame');
+const videoModalClose = document.getElementById('video-modal-close');
+
+const GUMLET_EMBED = `<div style="position:relative;aspect-ratio:16/9;">
+  <iframe
+    loading="lazy" title="Gumlet video player"
+    src="https://play.gumlet.io/embed/69d5381715722ddd136fab63?background=false&autoplay=false&loop=false&disable_player_controls=true&player_color=%23000000"
+    style="border:none; position: absolute; top: 0; left: 0; height: 100%; width: 100%;"
+    referrerpolicy="origin"
+    allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture; fullscreen;clipboard-write;">
+  </iframe>
+</div>`;
+
+function openVideoModal() {
+  videoModalFrame.innerHTML = GUMLET_EMBED;
+  videoModal.classList.add('open');
+}
+
+function closeVideoModal() {
+  videoModal.classList.remove('open');
+  videoModalFrame.innerHTML = ''; // stoppe la lecture
+}
+
+if (projetMedia) {
+  projetMedia.addEventListener('click', openVideoModal);
+}
+videoModalClose.addEventListener('click', closeVideoModal);
+videoModal.addEventListener('click', (e) => {
+  if (e.target === videoModal) closeVideoModal();
+});
 
 // ── CURSEUR CUSTOM ──
 const cursorEl = document.getElementById('cursor');
