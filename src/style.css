@@ -143,31 +143,45 @@ canvas {
 
 /* ── SCROLL SPACE ── */
 #scroll-space {
-  height: 300vh;
+  height: 500vh;
   pointer-events: none;
 }
 
-/* ── SECTION PROJETS (scroll classique) ── */
+/* ── SECTION PROJETS (fixed, remplace le logo à la fin du scroll) ── */
 #section-projets {
-  position: relative;
+  position: fixed;
+  inset: 0;
+  padding-top: 80px;
   z-index: 10;
+  opacity: 0;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  padding-top: 0;
+}
+
+.projets-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  max-width: 1440px;
+  width: 100%;
+  padding: 40px 48px 80px; /* 80px = hauteur du marquee footer */
+  margin: 0 auto;
+  margin-top: 40px;
 }
 
 .projet-card {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 32px;
-  max-width: 1440px;
-  width: 100%;
-  padding: 80px 48px 120px;
-  margin: 0 auto;
+  gap: 16px;
 }
 
 .projet-media {
   position: relative;
   width: 100%;
   aspect-ratio: 16 / 9;
+  max-height: 32vh;
   border: 1px solid rgba(255,255,255,0.08);
   overflow: hidden;
 }
@@ -194,6 +208,7 @@ canvas {
 .projet-media:hover .projet-video {
   opacity: 1;
 }
+
 
 /* curseur pointer sur la card */
 .projet-media { cursor: pointer; }
@@ -243,12 +258,6 @@ canvas {
 }
 #video-modal-close:hover { opacity: 1; }
 
-.projet-extra-img {
-  width: 1440px;
-  max-width: 100%;
-  display: block;
-}
-
 .projet-meta {
   display: flex;
   flex-direction: column;
@@ -272,28 +281,6 @@ canvas {
   color: #ddd;
   letter-spacing: 1px;
 }
-
-/* ── SECTION CONTENT (fixed, apparaît pendant le scroll Lenis) ── */
-#section-content {
-  position: fixed;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  opacity: 0;
-  pointer-events: none;
-  z-index: 10;
-}
-
-.section-para {
-  font-family: 'Anton', sans-serif;
-  font-style: normal;
-  font-size: clamp(125px, 2.2vw, 26px);
-  color: #cccccc;
-  line-height: 1.9;
-  letter-spacing: 0.5px;
-  text-align: center;
-}
-
 
 /* INTRO BAR */
 #intro-bar {
@@ -505,4 +492,173 @@ canvas {
 @keyframes eq {
   0%, 100% { transform: scaleY(0.2); opacity: 0.35; }
   50%       { transform: scaleY(1);  opacity: 1;    }
+}
+
+/* ── PLACEHOLDER CARDS ── */
+.placeholder-media {
+  background: #0d0d0d !important;
+  border: 0.5px solid #222 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+}
+
+.placeholder-tag {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #333;
+}
+
+/* ── COMPTEUR PORTFOLIO ── */
+#portfolio-counter {
+  position: absolute;
+  bottom: 32px;
+  right: 48px;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #444;
+  pointer-events: none;
+}
+
+/* ── MARQUEE FOOTER (toujours visible en bas) ── */
+#marquee-band {
+  position: fixed;
+  bottom: 0;
+  left: 0; right: 0;
+  z-index: 20;
+  overflow: hidden;
+  border-top: 0.5px solid #2a2a2a;
+  background: #050505;
+  padding: 18px 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .6s ease;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 8%, #000 92%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0%, #000 8%, #000 92%, transparent 100%);
+}
+
+#marquee-band.on {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ── CONTENU BAS (contact) ── */
+#content-bottom {
+  position: fixed;
+  inset: 0;
+  z-index: 11;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(100vh);
+  background: #0a0a0a;
+}
+
+.marquee-track {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  animation: marquee-scroll 40s linear infinite;
+}
+
+.marquee-track span {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #ffffff;
+  padding: 0 28px;
+}
+
+.marquee-track span i {
+  font-style: italic;
+  font-weight: 300;
+  color: #aaa;
+}
+
+.mq-sep {
+  font-style: normal;
+  font-size: 8px;
+  color: #444;
+  flex-shrink: 0;
+}
+
+@keyframes marquee-scroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ── SECTION CONTACT ── */
+#section-contact {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 48px 80px; /* 80px = hauteur du marquee footer */
+}
+
+.contact-eyebrow {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #444;
+  margin-bottom: 40px;
+}
+
+.contact-title {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: clamp(36px, 5vw, 64px);
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #fff;
+  line-height: 1.1;
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.contact-title em {
+  font-style: italic;
+}
+
+.contact-divider {
+  width: 1px;
+  height: 48px;
+  background: #222;
+  margin-bottom: 40px;
+}
+
+.contact-cta {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #0a0a0a;
+  background: #f0f0f0;
+  text-decoration: none;
+  padding: 14px 36px;
+  margin-bottom: 24px;
+  transition: background .2s ease, color .2s ease;
+}
+
+.contact-cta:hover {
+  background: #fff;
+  color: #000;
+}
+
+.contact-info {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #333;
 }

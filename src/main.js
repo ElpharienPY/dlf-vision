@@ -69,27 +69,32 @@ const taglines = [
 ];
 
 // ── ELEMENTS ──
-const siteHeader = document.getElementById('site-header');
-const hud        = document.getElementById('hud');
-const introBar   = document.getElementById('intro-bar');
-const barFill    = document.getElementById('barFill');
-const pctCounter = document.getElementById('pctCounter');
-const taglineEl     = document.getElementById('tagline');
-const sectionContent = document.getElementById('section-content');
-
+const siteHeader   = document.getElementById('site-header');
+const hud          = document.getElementById('hud');
+const introBar     = document.getElementById('intro-bar');
+const barFill      = document.getElementById('barFill');
+const pctCounter   = document.getElementById('pctCounter');
+const taglineEl    = document.getElementById('tagline');
+const sectionProjets = document.getElementById('section-projets');
+const contentBottom  = document.getElementById('content-bottom');
+const marqueeBand    = document.getElementById('marquee-band');
 // ── LENIS ──
 const lenis = new Lenis({ duration: 1.4 });
 lenis.stop(); // bloqué jusqu'à la fin de la phase d'intro
 
-// scrollRange = distance de scroll couverte uniquement par le scroll-space (300vh - 100vh = 200vh)
-// On garde ce calcul indépendant du contenu ajouté après (section-projets, etc.)
+// scrollRange : distance pour l'animation 3D (200vh)
+// Content phase : de 300vh à 400vh → contentProgress 0→1
 let scrollRange = 2 * window.innerHeight;
 let scrollRaw = 0;
 let scrollProgress = 0;
+let contentProgress = 0;
 
 lenis.on('scroll', ({ scroll }) => {
   scrollRaw = scroll;
   scrollProgress = Math.max(0, Math.min(1, scroll / scrollRange));
+  const contentStart    = scrollRange * 1.5; // 300vh
+  const contentDuration = scrollRange * 0.5; // 100vh
+  contentProgress = Math.max(0, Math.min(1, (scroll - contentStart) / contentDuration));
 });
 
 // ── ÉTAT ──
@@ -322,33 +327,25 @@ function animate(time = 0) {
   // Basé sur zoom (position Z réelle) → pas de glitch en remontant
   mat.opacity = Math.max(0, Math.min(1, (zoom - 0.8) / 2.0));
 
-  // Section para : fixed pendant le scroll Three.js, puis absolute (scroll classique) après scrollRange
-  if (scrollRaw >= scrollRange) {
-    if (sectionContent.style.position !== 'absolute') {
-      // Capture la position visuelle exacte avant de switcher
-      const rect = sectionContent.getBoundingClientRect();
-      sectionContent.style.position  = 'absolute';
-      sectionContent.style.top       = (window.scrollY + rect.top) + 'px';
-      sectionContent.style.left      = (window.scrollX + rect.left) + 'px';
-      sectionContent.style.transform = 'none';
-      sectionContent.style.opacity   = '1';
-    }
-  } else {
-    if (sectionContent.style.position === 'absolute') {
-      // Retour en fixed si on remonte
-      sectionContent.style.position  = 'fixed';
-      sectionContent.style.top       = '50%';
-      sectionContent.style.left      = '50%';
-      sectionContent.style.transform = 'translate(-50%, -50%)';
-    }
-    sectionContent.style.opacity = Math.max(0, Math.min(1, (scrollProgress - 0.68) / 0.2));
-  }
-
-  // Tagline et scroll hint s'effacent au scroll
+  // Tagline s'efface au scroll
   if (!lockedPhase) {
     const fadeOut = Math.max(0, 1 - scrollProgress * 5);
     taglineEl.style.opacity = fadeOut;
   }
+
+  // Clips : fade in dès que le logo disparaît (0.5 → 1.0), slide up au content scroll
+  const clipsOpacity = Math.max(0, Math.min(1, (scrollProgress - 0.5) / 0.5));
+  sectionProjets.style.opacity = clipsOpacity;
+  sectionProjets.style.pointerEvents = (clipsOpacity > 0 && contentProgress < 0.9) ? 'all' : 'none';
+  sectionProjets.style.transform = `translateY(${-contentProgress * 100}vh)`;
+
+  // Marquee footer : visible dès que les clips apparaissent, reste visible
+  if (clipsOpacity > 0.1) marqueeBand.classList.add('on');
+
+  // Contact : slide in du bas
+  contentBottom.style.opacity = String(contentProgress);
+  contentBottom.style.transform = `translateY(${(1 - contentProgress) * 100}vh)`;
+  contentBottom.style.pointerEvents = contentProgress > 0.5 ? 'all' : 'none';
 
   renderer.render(scene, camera);
 }
@@ -363,15 +360,15 @@ window.addEventListener('resize', () => {
 });
 
 // ── HOVER VIDÉO PROJET ──
-const projetMedia = document.querySelector('.projet-media');
-const projetVideo = document.querySelector('.projet-video');
-if (projetMedia && projetVideo) {
-  projetMedia.addEventListener('mouseenter', () => projetVideo.play());
-  projetMedia.addEventListener('mouseleave', () => { projetVideo.pause(); projetVideo.currentTime = 0; });
-}
+document.querySelectorAll('.projet-media').forEach(media => {
+  const video = media.querySelector('.projet-video');
+  if (!video) return;
+  media.addEventListener('mouseenter', () => video.play());
+  media.addEventListener('mouseleave', () => { video.pause(); video.currentTime = 0; });
+});
 
-// ── MODAL VIDÉO PROJET ──
-const videoModal     = document.getElementById('video-modal');
+// ── MODAL VIDÉO PROJET (1er clip uniquement) ──
+const videoModal      = document.getElementById('video-modal');
 const videoModalFrame = document.getElementById('video-modal-frame');
 const videoModalClose = document.getElementById('video-modal-close');
 
@@ -392,12 +389,11 @@ function openVideoModal() {
 
 function closeVideoModal() {
   videoModal.classList.remove('open');
-  videoModalFrame.innerHTML = ''; // stoppe la lecture
+  videoModalFrame.innerHTML = '';
 }
 
-if (projetMedia) {
-  projetMedia.addEventListener('click', openVideoModal);
-}
+const firstMedia = document.querySelector('.projet-media');
+if (firstMedia) firstMedia.addEventListener('click', openVideoModal);
 videoModalClose.addEventListener('click', closeVideoModal);
 videoModal.addEventListener('click', (e) => {
   if (e.target === videoModal) closeVideoModal();
