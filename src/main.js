@@ -80,22 +80,65 @@ const contentBottom  = document.getElementById('content-bottom');
 const marqueeBand    = document.getElementById('marquee-band');
 // ── LENIS ──
 const lenis = new Lenis({ duration: 1.4 });
-lenis.stop(); // bloqué jusqu'à la fin de la phase d'intro
+lenis.stop();
 
-// scrollRange : distance pour l'animation 3D (200vh)
-// Content phase : de 300vh à 400vh → contentProgress 0→1
-let scrollRange = 2 * window.innerHeight;
-let scrollRaw = 0;
 let scrollProgress = 0;
 let contentProgress = 0;
+let introPhase = true; // true = phase 3D, false = vraie page
 
+// ── SCROLL VIRTUEL (phase intro) ──
+// La roue capturée ne déplace pas la page — scrollProgress est purement virtuel.
+let introVirtualY = 0;
+let introMax = window.innerHeight * 2;
+
+window.addEventListener('wheel', (e) => {
+  if (!introPhase) return;
+  e.preventDefault();
+  introVirtualY = Math.max(0, Math.min(introMax, introVirtualY + e.deltaY));
+  scrollProgress = introVirtualY / introMax;
+  if (scrollProgress >= 0.98) finishIntro();
+}, { passive: false });
+
+let introTouchY = 0;
+window.addEventListener('touchstart', (e) => {
+  if (!introPhase) return;
+  introTouchY = e.touches[0].clientY;
+}, { passive: true });
+window.addEventListener('touchmove', (e) => {
+  if (!introPhase || drag) return;
+  const dy = introTouchY - e.touches[0].clientY;
+  introTouchY = e.touches[0].clientY;
+  introVirtualY = Math.max(0, Math.min(introMax, introVirtualY + dy));
+  scrollProgress = introVirtualY / introMax;
+  if (scrollProgress >= 0.98) finishIntro();
+}, { passive: true });
+
+// ── SCROLL RÉEL (après intro) ──
 lenis.on('scroll', ({ scroll }) => {
-  scrollRaw = scroll;
-  scrollProgress = Math.max(0, Math.min(1, scroll / scrollRange));
-  const contentStart    = scrollRange * 1.5; // 300vh
-  const contentDuration = scrollRange * 0.5; // 100vh
-  contentProgress = Math.max(0, Math.min(1, (scroll - contentStart) / contentDuration));
+  if (introPhase) return;
+  const cDur = window.innerHeight * 1.2;
+  contentProgress = Math.max(0, Math.min(1, scroll / cDur));
 });
+
+function finishIntro() {
+  if (!introPhase) return;
+  introPhase = false;
+  scrollProgress = 1;
+  autoRot = false;
+
+  setTimeout(() => {
+    canvas.style.transition = 'opacity 0.6s ease';
+    canvas.style.opacity = '0';
+    hud.style.transition = 'opacity 0.4s ease';
+    hud.style.opacity = '0';
+
+    marqueeBand.classList.add('on');
+
+    document.body.classList.add('intro-done');
+    lenis.scrollTo(0, { immediate: true });
+    lenis.start();
+  }, 200);
+}
 
 // ── ÉTAT ──
 let lockedPhase = false;  // logo figé droit (après retour smooth)
@@ -153,10 +196,6 @@ function runIntroBar() {
     } else {
       barFill.style.width = '100%';
       pctCounter.textContent = '100%';
-
-      // Scroll débloqué quand la barre est pleine
-      document.body.classList.add('ready');
-      lenis.start();
 
       // Cacher la barre, afficher la tagline
       setTimeout(() => {
@@ -356,7 +395,8 @@ window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
-  scrollRange = 2 * window.innerHeight;
+  introMax = window.innerHeight * 2;
+  introVirtualY = Math.min(introVirtualY, introMax);
 });
 
 // ── HOVER VIDÉO PROJET ──
